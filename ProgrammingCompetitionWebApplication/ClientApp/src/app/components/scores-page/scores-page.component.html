@@ -1,0 +1,22 @@
+<h1>Scores</h1>
+
+<p>This page shows top players with most successful submissions</p>
+
+<p *ngIf="!successfulSubmissions"><em>Loading...</em></p>
+
+<table class='table' *ngIf="successfulSubmissions">
+  <thead>
+    <tr>
+      <th>Nickname</th>
+      <th>Successful submissions</th>
+      <th>Solved Tasks</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let successfulSubmission of successfulSubmissions">
+      <td>{{ successfulSubmission.nickname }}</td>
+      <td>{{ successfulSubmission.successfulSubmissions }}</td>
+      <td>{{ successfulSubmission.solvedTasks }}</td>
+    </tr>
+  </tbody>
+</table>

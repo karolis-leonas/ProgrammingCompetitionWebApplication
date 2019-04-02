@@ -1,0 +1,21 @@
+.form-inputs {
+    width: 60vw;
+}
+
+.form-item {
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.item-value {
+    width: 100%;
+}
+
+.item-title {
+    width: 160px;
+}
+
+.solution-height {
+    height: 20vh;
+}

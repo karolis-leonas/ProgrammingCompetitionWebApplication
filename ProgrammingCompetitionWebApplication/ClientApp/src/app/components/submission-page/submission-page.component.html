@@ -1,0 +1,48 @@
+<h1>Submission page</h1>
+
+<p>Please insert your nickname, select task name from list and write code or solution down below.</p>
+
+<form (ngSubmit)="onSubmissionSubmit()" #submissionForm="ngForm">
+    <div class="form-inputs">
+        <div class="form-item">
+            <div class="item-title">Nickname: </div>
+            <input
+                name="nickname"
+                class="item-value"
+                [(ngModel)]="submission.nickname"
+                type="text"
+                placeholder="Nickname">
+        </div>
+
+        
+        <div class="form-item">
+            <div class="item-title">Programming task: </div>
+            <select required
+                name="task"
+                class="item-value"
+                [(ngModel)]="submission.taskId">
+                <option [ngValue]="undefined" hidden selected>Select task</option>
+                <option [value]="programmingTask.id" *ngFor="let programmingTask of programmingTasks">
+                    {{programmingTask.taskName}}
+                </option>
+            </select>
+        </div>
+
+        
+        <div class="form-item">
+            <div class="item-title">Solution: </div>
+            <textarea
+                name="solution"
+                class="item-value solution-height"
+                [(ngModel)]="submission.solution"
+                type="text"
+                placeholder="Solution">
+            </textarea>     
+        </div>
+          
+
+        <button type="submit" [disabled]="!submissionForm.form.valid">
+            Submit
+        </button>
+    </div>
+</form>
