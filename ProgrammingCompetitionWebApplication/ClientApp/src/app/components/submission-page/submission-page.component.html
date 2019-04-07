@@ -1,8 +1,6 @@
 <div>
     <h1>Submission page</h1>
-
     <p>Please insert your nickname, select task name from list and write code for solution down below.</p>
-    
     <form (ngSubmit)="onSubmissionSubmit()" #submissionForm="ngForm">
         <div class="form-inputs">
             <div class="form-item">
@@ -14,8 +12,7 @@
                     type="text"
                     placeholder="Nickname">
             </div>
-    
-            
+                
             <div class="form-item">
                 <div class="item-title">Programming task: </div>
                 <select required
@@ -28,8 +25,7 @@
                     </option>
                 </select>
             </div>
-    
-            
+                
             <div class="form-item">
                 <div class="item-title">Solution: </div>
                 <textarea
@@ -40,8 +36,7 @@
                     placeholder="Type code in C#...">
                 </textarea>     
             </div>
-                
-    
+                    
             <button type="submit" [disabled]="!submissionForm.form.valid">
                 Submit
             </button>
