@@ -1,48 +1,66 @@
-<h1>Submission page</h1>
+<div>
+    <h1>Submission page</h1>
 
-<p>Please insert your nickname, select task name from list and write code or solution down below.</p>
-
-<form (ngSubmit)="onSubmissionSubmit()" #submissionForm="ngForm">
-    <div class="form-inputs">
-        <div class="form-item">
-            <div class="item-title">Nickname: </div>
-            <input
-                name="nickname"
-                class="item-value"
-                [(ngModel)]="submission.nickname"
-                type="text"
-                placeholder="Nickname">
+    <p>Please insert your nickname, select task name from list and write code for solution down below.</p>
+    
+    <form (ngSubmit)="onSubmissionSubmit()" #submissionForm="ngForm">
+        <div class="form-inputs">
+            <div class="form-item">
+                <div class="item-title">Nickname: </div>
+                <input
+                    name="nickname"
+                    class="item-value"
+                    [(ngModel)]="submission.nickname"
+                    type="text"
+                    placeholder="Nickname">
+            </div>
+    
+            
+            <div class="form-item">
+                <div class="item-title">Programming task: </div>
+                <select required
+                    name="task"
+                    class="item-value"
+                    [(ngModel)]="submission.taskId">
+                    <option [ngValue]="undefined" hidden selected>Select task</option>
+                    <option [value]="programmingTask.id" *ngFor="let programmingTask of programmingTasks">
+                        {{programmingTask.taskName}}
+                    </option>
+                </select>
+            </div>
+    
+            
+            <div class="form-item">
+                <div class="item-title">Solution: </div>
+                <textarea
+                    name="solution"
+                    class="item-value solution-area console-text"
+                    [(ngModel)]="submission.solution"
+                    type="text"
+                    placeholder="Type code in C#...">
+                </textarea>     
+            </div>
+                
+    
+            <button type="submit" [disabled]="!submissionForm.form.valid">
+                Submit
+            </button>
         </div>
-
-        
-        <div class="form-item">
-            <div class="item-title">Programming task: </div>
-            <select required
-                name="task"
-                class="item-value"
-                [(ngModel)]="submission.taskId">
-                <option [ngValue]="undefined" hidden selected>Select task</option>
-                <option [value]="programmingTask.id" *ngFor="let programmingTask of programmingTasks">
-                    {{programmingTask.taskName}}
-                </option>
-            </select>
+    </form>
+    
+    <div class="result-text" *ngIf="submissionResult">
+        <div>Your input result:
+            <p class="console-text">{{submissionResult.response}}</p>
         </div>
-
-        
-        <div class="form-item">
-            <div class="item-title">Solution: </div>
-            <textarea
-                name="solution"
-                class="item-value solution-height"
-                [(ngModel)]="submission.solution"
-                type="text"
-                placeholder="Solution">
-            </textarea>     
+        <div>
+            Correct task result:
+            <p class="console-text">{{submissionResult.correctResult}}</p>
+        </div>        
+        <div *ngIf="submissionResult.isCorrectResult" class="green-text">
+            Your input result is <b>correct!</b>
         </div>
-          
-
-        <button type="submit" [disabled]="!submissionForm.form.valid">
-            Submit
-        </button>
+        <div *ngIf="!submissionResult.isCorrectResult" class="red-text">
+            Your input result is <b>incorrect!</b>
+        </div>
     </div>
-</form>
+</div>

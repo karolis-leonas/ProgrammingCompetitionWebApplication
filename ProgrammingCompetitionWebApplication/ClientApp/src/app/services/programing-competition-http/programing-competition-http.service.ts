@@ -5,6 +5,7 @@ import { Observable, } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SubmissionModel } from '../../models/submission.model';
 import { ProgrammingTaskModel } from '../../models/programming-task.model';
+import { SubmissionResultModel } from '../../models/submission-result.model';
 
 @Injectable({
   providedIn: 'root'
@@ -55,10 +56,16 @@ export class ProgrammingCompetitionHttpService {
     )
   };
 
-  public saveSubmission(submission: SubmissionModel): Observable<boolean> {
-    return this._httpClient.post('heficed.com', submission).pipe(
-      map(result => {
-        return true;
+  public saveSubmission(submission: SubmissionModel): Observable<SubmissionResultModel> {
+    return this._httpClient.post(`${this.controllerUrl}/ExecuteSubmission`, submission).pipe(
+      map((submissionResult: any) => {
+        const mappedSubmissionResult: SubmissionResultModel = {
+          response: submissionResult.response,
+          correctResult: submissionResult.correctResult,
+          isCorrectResult: submissionResult.isCorrectResult
+        };
+
+        return mappedSubmissionResult;
       })
     );
   }

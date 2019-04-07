@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ProgrammingCompetitionWebApplication.Services.SubmissionsService;
+using System;
+using System.Net;
+using System.Net.Http;
 
 namespace ProgrammingCompetitionWebApplication
 {
@@ -26,6 +30,17 @@ namespace ProgrammingCompetitionWebApplication
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            var onlineCompilerUri = new Uri("https://dotnetfiddle.net/");
+            var httpClient = new HttpClient()
+            {
+                BaseAddress = onlineCompilerUri,
+            };
+
+            ServicePointManager.FindServicePoint(onlineCompilerUri).ConnectionLeaseTimeout = 60000;
+            services.AddSingleton<HttpClient>(httpClient)
+                .AddScoped<ISubmissionsService, SubmissionsService>()
+                .BuildServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

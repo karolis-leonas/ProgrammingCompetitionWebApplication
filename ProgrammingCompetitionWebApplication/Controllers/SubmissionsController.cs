@@ -3,12 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingCompetitionWebApplication.Models;
+using ProgrammingCompetitionWebApplication.Services.SubmissionsService;
 
 namespace ProgrammingCompetitionWebApplication.Controllers
 {
     [Route("api/[controller]")]
     public class SubmissionsController : Controller
     {
+        private readonly ISubmissionsService _submissionsService;
+
+        public SubmissionsController(ISubmissionsService submissionsService)
+        {
+            _submissionsService = submissionsService;
+        }
+
         [HttpGet("[action]")]
         public IEnumerable<TopSubmitter> TopSubmitters()
         {
@@ -29,6 +37,14 @@ namespace ProgrammingCompetitionWebApplication.Controllers
                 Id = index,
                 TaskName = RandomString(5)
             });
+        }
+
+        [HttpPost("[action]")]
+        public SubmissionResponse ExecuteSubmission([FromBody] Submission submission)
+        {
+            var result = _submissionsService.ExecuteFiddleAsync(submission).Result;
+
+            return result;
         }
 
         private string RandomString(int length)

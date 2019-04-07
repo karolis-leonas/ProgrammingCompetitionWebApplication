@@ -1,5 +1,5 @@
 .form-inputs {
-    width: 60vw;
+    max-width: 100em;
 }
 
 .form-item {
@@ -13,9 +13,26 @@
 }
 
 .item-title {
-    width: 160px;
+    width: 200px;
 }
 
-.solution-height {
-    height: 20vh;
+.solution-area {
+    height: 50vh;
+    resize: none;
+}
+
+.console-text {
+    font-family: 'Consolas'
+}
+
+.result-text {
+    padding: 20px 0;
+}
+
+.green-text {
+    color: green;
+}
+
+.red-text {
+    color: red;
 }
