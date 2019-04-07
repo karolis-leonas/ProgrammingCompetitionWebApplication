@@ -1,4 +1,4 @@
 export class ProgrammingTaskModel {
-    id: number;
+    taskId: number;
     taskName: string;
 }

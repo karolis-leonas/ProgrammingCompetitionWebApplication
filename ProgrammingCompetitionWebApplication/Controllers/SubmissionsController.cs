@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingCompetitionWebApplication.Models;
+using ProgrammingCompetitionWebApplication.Dtos;
 using ProgrammingCompetitionWebApplication.Services.SubmissionsService;
+using Microsoft.Extensions.Logging;
 
 namespace ProgrammingCompetitionWebApplication.Controllers
 {
@@ -11,48 +13,82 @@ namespace ProgrammingCompetitionWebApplication.Controllers
     public class SubmissionsController : Controller
     {
         private readonly ISubmissionsService _submissionsService;
+        private readonly ILogger _logger;
 
-        public SubmissionsController(ISubmissionsService submissionsService)
+        public SubmissionsController(ISubmissionsService submissionsService,
+            ILogger<SubmissionsController> logger)
         {
             _submissionsService = submissionsService;
+            _logger = logger;
         }
 
         [HttpGet("[action]")]
-        public IEnumerable<TopSubmitter> TopSubmitters()
+        public IEnumerable<TopSubmitterDto> TopSubmitters()
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new TopSubmitter
+            try
             {
-                Nickname = DateTime.Now.AddDays(index).ToString("d"),
-                SuccessfulSubmissions = rng.Next(0, 100),
-                SolvedTasks = new List<string>(){ RandomString(5), RandomString(6), RandomString(7) }
+                var topSubmitters = _submissionsService.GetTop5Submitters();
+
+            var topSubmitterDtos = topSubmitters.Select(topSubmission => new TopSubmitterDto()
+            {
+                Nickname = topSubmission.Nickname,
+                SolvedTasks = topSubmission.SolvedTasks,
+                SuccessfulSubmissions = topSubmission.SuccessfulSubmissions
             });
+
+            return topSubmitterDtos;
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception.Message);
+                throw;
+            }
         }
 
         [HttpGet("[action]")]
-        public IEnumerable<ProgrammingTask> ProgrammingTasks()
+        public IEnumerable<BaseProgrammingTaskDto> ProgrammingTasks()
         {
-            return Enumerable.Range(1, 15).Select(index => new ProgrammingTask
+            try
             {
-                Id = index,
-                TaskName = RandomString(5)
-            });
+                var programmingTasks = _submissionsService.GetProgrammingTasks();
+
+                var programmingTaskDtos = programmingTasks.Select(programmingTask => new BaseProgrammingTaskDto()
+                {
+                    TaskId = programmingTask.TaskId,
+                    TaskName = programmingTask.TaskName
+                });
+
+                return programmingTaskDtos;
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception.Message);
+                throw;
+            }
+
         }
 
         [HttpPost("[action]")]
-        public SubmissionResponse ExecuteSubmission([FromBody] Submission submission)
+        public SubmissionResponse ExecuteSubmission([FromBody] BaseSubmissionDto baseSubmissionDto)
         {
-            var result = _submissionsService.ExecuteFiddleAsync(submission).Result;
+            try
+            {
+                var baseSubmission = new BaseSubmission()
+                {
+                    Nickname = baseSubmissionDto.Nickname,
+                    Solution = baseSubmissionDto.Solution,
+                    TaskId = baseSubmissionDto.TaskId
+                };
 
-            return result;
-        }
+                var result = _submissionsService.ExecuteFiddleAsync(baseSubmission).Result;
 
-        private string RandomString(int length)
-        {
-            var rng = new Random();
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, length)
-                .Select(s => s[rng.Next(s.Length)]).ToArray());
+                return result;
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception.Message);
+                throw;
+            }
         }
     }
 }

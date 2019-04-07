@@ -1,4 +1,4 @@
-﻿namespace ProgrammingCompetitionWebApplication.Models
+﻿namespace ProgrammingCompetitionWebApplication.Models.CompilerModels
 {
     public class MvcCodeBlock
     {

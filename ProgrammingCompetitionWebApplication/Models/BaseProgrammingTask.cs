@@ -1,8 +1,8 @@
 ﻿namespace ProgrammingCompetitionWebApplication.Models
 {
-    public class ProgrammingTask
+    public partial class BaseProgrammingTask
     {
-        public int Id { get; set; }
+        public int TaskId { get; set; }
         public string TaskName { get; set; }
     }
 }

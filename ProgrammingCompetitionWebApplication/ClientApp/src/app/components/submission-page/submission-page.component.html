@@ -7,6 +7,7 @@
                 <div class="item-title">Nickname: </div>
                 <input
                     name="nickname"
+                    maxlength="50"
                     class="item-value"
                     [(ngModel)]="submission.nickname"
                     type="text"
@@ -20,7 +21,7 @@
                     class="item-value"
                     [(ngModel)]="submission.taskId">
                     <option [ngValue]="undefined" hidden selected>Select task</option>
-                    <option [value]="programmingTask.id" *ngFor="let programmingTask of programmingTasks">
+                    <option [value]="programmingTask.taskId" *ngFor="let programmingTask of programmingTasks">
                         {{programmingTask.taskName}}
                     </option>
                 </select>
@@ -44,18 +45,21 @@
     </form>
     
     <div class="result-text" *ngIf="submissionResult">
-        <div>Your input result:
-            <p class="console-text">{{submissionResult.response}}</p>
+        <div *ngIf="submissionResult.isSubmissionAccepted">
+            <div>Your input result:
+                <p class="console-text">{{submissionResult.response}}</p>
+            </div>     
+            <div *ngIf="submissionResult.isCorrectResult" class="green-text">
+                Your input result is <b>correct!</b>
+            </div>
+            <div *ngIf="!submissionResult.isCorrectResult" class="red-text">
+                Your input result is <b>incorrect!</b>
+            </div>
         </div>
-        <div>
-            Correct task result:
-            <p class="console-text">{{submissionResult.correctResult}}</p>
-        </div>        
-        <div *ngIf="submissionResult.isCorrectResult" class="green-text">
-            Your input result is <b>correct!</b>
+        <div *ngIf="!submissionResult.isSubmissionAccepted">
+            <div>There was error while executing your submission:
+                <p class="console-text">{{submissionResult.response}}</p>
+            </div>
         </div>
-        <div *ngIf="!submissionResult.isCorrectResult" class="red-text">
-            Your input result is <b>incorrect!</b>
-        </div>
-    </div>
+    </div>    
 </div>

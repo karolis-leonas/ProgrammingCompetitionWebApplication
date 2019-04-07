@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using ProgrammingCompetitionWebApplication.Enums;
 using ProgrammingCompetitionWebApplication.Models;
+using ProgrammingCompetitionWebApplication.Models.CompilerModels;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -12,13 +14,15 @@ namespace ProgrammingCompetitionWebApplication.Services.SubmissionsService
     public class SubmissionsService : ISubmissionsService
     {
         private readonly HttpClient _httpClient; // declare a HttpClient
+        private readonly ISubmissionsRepository _submissionsRepository;
 
-        public SubmissionsService(HttpClient httpClient)
+        public SubmissionsService(HttpClient httpClient, ISubmissionsRepository submissionsRepository)
         {
             _httpClient = httpClient;
+            _submissionsRepository = submissionsRepository;
         }
 
-        public async Task<SubmissionResponse> ExecuteFiddleAsync(Submission submission)
+        public async Task<SubmissionResponse> ExecuteFiddleAsync(BaseSubmission submission)
         {
             var model = ConfigureSubmissionForm(submission.Solution);
             const string requestEndpoint = "api/fiddles";
@@ -32,16 +36,38 @@ namespace ProgrammingCompetitionWebApplication.Services.SubmissionsService
                 result.Response = 
                     $@"Failed to execute API request. Here is an answer from API:
 Response Code: {response.StatusCode}, Response Body: {response.Content}";
+                result.IsSubmissionAccepted = false;
             }
             else
             {
                 var unparsedResponse = await response.Content.ReadAsStringAsync();
                 var executionResult = JsonConvert.DeserializeObject<FiddleExecuteResult>(unparsedResponse);
-
-                result.Response = executionResult.ConsoleOutput;
+                if (!executionResult.HasErrors && !executionResult.HasCompilationErrors)
+                {
+                    result = _submissionsRepository.SaveNewSubmission(submission, executionResult.ConsoleOutput);
+                }
+                else
+                {
+                    result.Response = executionResult.ConsoleOutput;
+                    result.IsSubmissionAccepted = false;
+                }
             }
 
             return result;
+        }
+
+        public IEnumerable<BaseProgrammingTask> GetProgrammingTasks()
+        {
+            var programmingTasks = _submissionsRepository.GetProgrammingTasks();
+
+            return programmingTasks;
+        }
+
+        public IEnumerable<TopSubmitter> GetTop5Submitters()
+        {
+            var topSubmitters = _submissionsRepository.GetTop5Submitters();
+
+            return topSubmitters;
         }
 
         private FiddleModel ConfigureSubmissionForm(string code)

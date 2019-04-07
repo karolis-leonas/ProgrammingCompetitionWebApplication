@@ -44,7 +44,7 @@ export class ProgrammingCompetitionHttpService {
 
         programmingTasks.forEach(programmingTask => {
           const mappedTopSubmitterItem: ProgrammingTaskModel = {
-            id: programmingTask.id,
+            taskId: programmingTask.taskId,
             taskName: programmingTask.taskName
           };
           
@@ -56,12 +56,12 @@ export class ProgrammingCompetitionHttpService {
     )
   };
 
-  public saveSubmission(submission: SubmissionModel): Observable<SubmissionResultModel> {
-    return this._httpClient.post(`${this.controllerUrl}/ExecuteSubmission`, submission).pipe(
+  public saveSubmission(baseSubmissionDto: SubmissionModel): Observable<SubmissionResultModel> {
+    return this._httpClient.post(`${this.controllerUrl}/ExecuteSubmission`, baseSubmissionDto).pipe(
       map((submissionResult: any) => {
         const mappedSubmissionResult: SubmissionResultModel = {
           response: submissionResult.response,
-          correctResult: submissionResult.correctResult,
+          isSubmissionAccepted: submissionResult.isSubmissionAccepted,
           isCorrectResult: submissionResult.isCorrectResult
         };
 

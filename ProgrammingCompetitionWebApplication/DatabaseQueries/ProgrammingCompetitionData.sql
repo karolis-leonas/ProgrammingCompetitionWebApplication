@@ -1,7 +1,7 @@
-﻿CREATE DATABASE [ProgrammmingCompetitionData];
+﻿CREATE DATABASE [ProgrammingCompetitionData];
 GO
 
-USE [ProgrammmingCompetitionData];
+USE [ProgrammingCompetitionData];
 GO
 
 CREATE TABLE [ProgrammingTask]
@@ -22,7 +22,7 @@ INSERT INTO [ProgrammingTask] (TaskName, Result) VALUES
 	('Find all alphabet letters (uppercase)', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')
 GO
 
-CREATE TABLE [Submissions]
+CREATE TABLE [UserSubmission]
 (
 	[SubmissionId] INT IDENTITY (1, 1) NOT NULL,
 	[Nickname] NVARCHAR (50) NOT NULL,
@@ -35,11 +35,11 @@ CREATE TABLE [Submissions]
     PRIMARY KEY CLUSTERED ([SubmissionId] ASC),
     CONSTRAINT [FK_TaskId] FOREIGN KEY ([TaskId]) 
         REFERENCES [ProgrammingTask] ([TaskId]) ON DELETE CASCADE,
-	CONSTRAINT [Unique_Nickname_Task_Submissions] UNIQUE (Nickname, TaskId)
+	CONSTRAINT [Unique_Nickname_Task_UserSubmissions] UNIQUE (Nickname, TaskId)
 );
 GO
 
-INSERT INTO [Submissions] (Nickname, TaskId, Result, IsCorrect, SubmissionDateTime, IsDeleted) VALUES
+INSERT INTO [UserSubmission] (Nickname, TaskId, Result, IsCorrect, SubmissionDateTime, IsDeleted) VALUES
 		('John', 1, 'Goodbye world', 0, GETUTCDATE(), 0),
 		('John', 2, '4', 1, GETUTCDATE(), 0),
 		('John', 3, '13', 1, GETUTCDATE(), 0),

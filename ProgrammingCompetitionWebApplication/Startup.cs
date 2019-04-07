@@ -4,10 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ProgrammingCompetitionWebApplication.DataContexts;
 using ProgrammingCompetitionWebApplication.Services.SubmissionsService;
 using System;
 using System.Net;
 using System.Net.Http;
+using Microsoft.EntityFrameworkCore;
+using ProgrammingCompetitionWebApplication.Models.Configuration;
 
 namespace ProgrammingCompetitionWebApplication
 {
@@ -24,22 +27,28 @@ namespace ProgrammingCompetitionWebApplication
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            var mainConfiguration = Configuration.GetSection("MainConfiguration");
+            services.Configure<MainConfiguration>(mainConfiguration);
+
+            var mainConfigurationSection = mainConfiguration.Get<MainConfiguration>();
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "ClientApp/dist";
+                configuration.RootPath = mainConfigurationSection.RootPath;
             });
+            services.AddDbContext<ProgrammingCompetitionDataContext>(options => options.UseSqlServer(mainConfigurationSection.DatabaseLocation));
 
-            var onlineCompilerUri = new Uri("https://dotnetfiddle.net/");
+            var onlineCompilerUri = new Uri(mainConfigurationSection.OnlineCompilerApi);
             var httpClient = new HttpClient()
             {
                 BaseAddress = onlineCompilerUri,
             };
 
-            ServicePointManager.FindServicePoint(onlineCompilerUri).ConnectionLeaseTimeout = 60000;
+            ServicePointManager.FindServicePoint(onlineCompilerUri).ConnectionLeaseTimeout = mainConfigurationSection.ConnectionLeaseTimeout;
             services.AddSingleton<HttpClient>(httpClient)
                 .AddScoped<ISubmissionsService, SubmissionsService>()
+                .AddScoped<ISubmissionsRepository, SubmissionsRepository>()
                 .BuildServiceProvider();
         }
 
